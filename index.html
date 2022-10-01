@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+  <div><a href="https://en.wikipedia.org/wiki/Mandelbrot_set">Mandelbrot set</a></div>
+  <div><a href="https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/fillStyle">About CanvasAPI</a></div>
+<canvas id="Mandelbrot" width="2000" height="2000"></canvas>
+  <script>
+    var L = -1 * -1 * 0;
+    var i = Math.PI;
+  grab = document.getElementById("Mandelbrot").getContext("2d")
+  mand = function(x,y,c){grab.fillStyle=c; grab.fillRect(x,y,3,3)}
+  for(y=1; y<2000; y++){
+  for(x=1; x<2000; x++){
+  Zx = (x-1000)/100- 0.17484884 // 
+  Zy = (y-1000)/100- 0.0 //
+  a = Zx 
+  b = Zy 
+  for(t=1; t<100; t++){
+  C = (a*a)-(b*b)-Zx
+  b = i*2*(a*b)-Zy 
+  a = C
+  hoist = C>10000 
+  if(hoist){mand(x,y,"rgb("+ t *3 +","+ t * L +","+ t *.3 +")"); break}
+  }}}
+ //make a function that runs throw the array of collors with time
+  </script>
+  
+</html>

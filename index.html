@@ -14,14 +14,14 @@
   Zy = (y-1000)/100- 0.0 //
   a = Zx 
   b = Zy 
-  for(t=1; t<100; t++){
+  for(t=1; t<200; t++){
   C = (a*a)-(b*b)-Zx
+  //remove i from b to make a standard mandelbrot 
   b = i*2*(a*b)-Zy 
   a = C
   hoist = C>10000 
   if(hoist){mand(x,y,"rgb("+ t *3 +","+ t * L +","+ t *.3 +")"); break}
   }}}
- //make a function that runs throw the array of collors with time
   </script>
   
 </html>

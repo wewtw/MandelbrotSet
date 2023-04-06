@@ -1,27 +1,137 @@
 <!DOCTYPE html>
 <html>
-  <div><a href="https://en.wikipedia.org/wiki/Mandelbrot_set">Mandelbrot set</a></div>
-  <div><a href="https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/fillStyle">About CanvasAPI</a></div>
-<canvas id="Mandelbrot" width="2000" height="2000"></canvas>
+
+<head>
+  <meta charset="utf-8">
+  <title>Mandelbrot Set Explorer</title>
+</head>
+
+<body>
+  <canvas id="canvas" width="1000px" height="1000px"></canvas>
+  <div id="iteration-counter"></div>
+	
+
   <script>
-    var L = -1 * -1 * 0;
-    var i = Math.PI;
-  grab = document.getElementById("Mandelbrot").getContext("2d")
-  mand = function(x,y,c){grab.fillStyle=c; grab.fillRect(x,y,3,3)}
-  for(y=1; y<2000; y++){
-  for(x=1; x<2000; x++){
-  Zx = (x-1000)/100- 0.17484884 // 
-  Zy = (y-1000)/100- 0.0 //
-  a = Zx 
-  b = Zy 
-  for(t=1; t<200; t++){
-  C = (a*a)-(b*b)-Zx
-  //remove i from b to make a standard mandelbrot 
-  b = i*2*(a*b)-Zy 
-  a = C
-  hoist = C>10000 
-  if(hoist){mand(x,y,"rgb("+ t *3 +","+ t * L +","+ t *.3 +")"); break}
-  }}}
-  </script>
+    const canvas = document.getElementById('canvas');
+    const context = canvas.getContext('2d');
+
+    function drawMandelbrotSet(xMin, yMin, xMax, yMax, maxIterations) {
+  const canvas = document.getElementById('canvas');
+  const context = canvas.getContext('2d');
+  const iterationCounter = document.getElementById('iteration-counter');
+  const width = canvas.width;
+  const height = canvas.height;
   
+  const imageData = context.createImageData(width, height);
+
+  const colors = [
+  [0, 7, 100],
+  [32, 107, 203],
+  [237, 255, 255],
+  [255, 170, 0],
+  [0, 2, 0],
+  [255, 255, 255],
+  [0, 0, 0],
+  [255, 0, 0],
+  [0, 255, 0],
+  [0, 0, 255],
+  [255, 255, 0],
+  [255, 0, 255],
+  [0, 255, 255],
+  [255, 255, 255],
+  [128, 0, 0],
+  [0, 128, 0],
+  [0, 0, 128],
+  [128, 128, 0],
+  [128, 0, 128],
+  [0, 128, 128],
+  [128, 128, 128],
+  [255, 128, 0],
+  [255, 0, 128],
+  [128, 255, 0],
+  [0, 255, 128],
+  [128, 0, 255],
+  [0, 128, 255],
+  [255, 255, 128],
+  [255, 128, 255],
+  [128, 255, 255],
+];
+	
+
+
+  const getColor = (iterationCount) => {
+  const t = iterationCount / maxIterations;
+  const colorIndex1 = Math.floor(t * (colors.length - 1));
+  const colorIndex2 = colorIndex1 + 1;
+  const colorT = (t - colorIndex1 / (colors.length - 1)) * (colors.length - 1);
+  const color1 = colors[colorIndex1];
+  const color2 = colors[colorIndex2] || color1;
+  return [
+    Math.round(color1[0] + (color2[0] - color1[0]) * colorT),
+    Math.round(color1[1] + (color2[1] - color1[1]) * colorT),
+    Math.round(color1[2] + (color2[2] - color1[2]) * colorT)
+  ];
+};
+
+  for (let i = 0; i < width; i++) {
+    for (let j = 0; j < height; j++) {
+      const x0 = xMin + i * (xMax - xMin) / width;
+      const y0 = yMin + j * (yMax - yMin) / height;
+      
+      let x = 0;
+      let y = 0;
+      let iteration = 0;
+      while (x*x + y*y <= 4 && iteration < maxIterations) {
+        const xTemp = x*x - y*y + x0;
+        y = 2*x*y + y0;
+        x = xTemp;
+        iteration++;
+        
+      }
+
+      const color = getColor(iteration);
+      const index = (i + j * width) * 4;
+      imageData.data[index + 0] = color[0];
+      imageData.data[index + 1] = color[1];
+      imageData.data[index + 2] = color[2];
+      imageData.data[index + 3] = 255;
+
+	iterationCounter.textContent = `Iterations: ${iteration}`;
+        
+        
+    }
+  }
+
+  context.putImageData(imageData, 0, 0);
+}
+
+    function drawFractal() {
+  drawMandelbrotSet(xMin, yMin, xMax, yMax, maxIterations);
+}
+
+let xMin = -2;
+let yMin = -2;
+let xMax = 2;
+let yMax = 2;
+let maxIterations = 100; //add to make more details. Needs lots of computing power.
+drawFractal();
+
+canvas.addEventListener('wheel', (event) => {
+  const rect = canvas.getBoundingClientRect();
+  const x = ((event.clientX - rect.left) / canvas.width) * (xMax - xMin) + xMin;
+  const y = ((event.clientY - rect.top) / canvas.height) * (yMax - yMin) + yMin;
+  const factor = event.deltaY > 0 ? 1.1 : 0.9;
+  xMin = factor * (xMin - x) + x;
+  xMax = factor * (xMax - x) + x;
+  yMin = factor * (yMin - y) + y;
+  yMax = factor * (yMax - y) + y;
+  drawFractal();
+});
+
+
+  
+  </script>
+
+</body>
+
 </html>
